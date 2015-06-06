@@ -18,7 +18,7 @@ export default Ember.Mixin.create({
   /**
    * Bind resizeHandler either to the parent view or window
    */
-  _setupResizeHandlers: function () {
+  _setupResizeHandlers: Ember.on('didInsertElement', function () {
     var resizeHandler = this.get('_handleResize');
     var parent = this.findResizableParentView(this.get('parentView'));
     if (Ember.isNone(parent)) {
@@ -29,15 +29,15 @@ export default Ember.Mixin.create({
     } else {
       parent.on('resize', this, resizeHandler);
     }
-  }.on('didInsertElement'),
+  }),
   /**
    * Unbind from window if window binding was used
    */
-  _removeResizeHandlers: function () {
+  _removeResizeHandlers: Ember.on('willDestroyElement', function () {
     if (this._resizeHandler) {
       Ember.$(window).off("resize." + this.elementId, this._resizeHandler);
     }
-  }.on('willDestroyElement'),
+  }),
   /**
    * Triggers resize events
    * Promise allows to chain events so async operations happen in sequence
